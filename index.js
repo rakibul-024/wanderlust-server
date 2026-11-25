@@ -47,31 +47,31 @@ app.get('/destination', async (req, res) => {
 app.get("/destination/:id", async (req, res) => {
     const id = req.params.id;
     let result = null;
-
     if (ObjectId.isValid(id)) {
         result = await destinationsCollection.findOne({ _id: new ObjectId(id) });
-    }
-
-    if (!result) {
+    }if (!result) {
         result = await destinationsCollection.findOne({ _id: id });
     }
-
     res.send(result);
 });
 
-app.delete("/destination/:id", async (req, res) => {
-    const id = req.params.id;
-    const query = ObjectId.isValid(id) ? { _id: new ObjectId(id) }:{ _id: id };
-    const result = await destinationsCollection.deleteOne(query);
-    res.send(result);
+
+app.patch('/destination/:id', async (req, res) => {
+  const { id } = req.params;
+  const updateData = req.body;
+  const result = await destinationCollection.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: updateData }
+  );
+  res.json(result);
 });
 
-app.post("/destination", async (req, res) => {
-    const bookingData = req.body;
-    console.log(bookingData);
-    const result = await destinationCollection.insertOne(destinationData);
-    res.send(result);
-});
+// app.delete("/destination/:id", async (req, res) => {
+//     const id = req.params.id;
+//     const query = ObjectId.isValid(id) ? { _id: new ObjectId(id) }:{ _id: id };
+//     const result = await destinationsCollection.deleteOne(query);
+//     res.send(result);
+// });
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
