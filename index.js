@@ -59,19 +59,22 @@ app.get("/destination/:id", async (req, res) => {
 app.patch('/destination/:id', async (req, res) => {
   const { id } = req.params;
   const updateData = req.body;
-  const result = await destinationCollection.updateOne(
-    { _id: new ObjectId(id) },
+  const query = ObjectId.isValid(id) ? { _id: new ObjectId(id) } : { _id: id };
+
+  const result = await destinationsCollection.updateOne(
+    query,
     { $set: updateData }
   );
   res.json(result);
 });
 
-// app.delete("/destination/:id", async (req, res) => {
-//     const id = req.params.id;
-//     const query = ObjectId.isValid(id) ? { _id: new ObjectId(id) }:{ _id: id };
-//     const result = await destinationsCollection.deleteOne(query);
-//     res.send(result);
-// });
+
+app.delete("/destination/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = ObjectId.isValid(id) ? { _id: new ObjectId(id) }:{ _id: id };
+    const result = await destinationsCollection.deleteOne(query);
+    res.send(result);
+});
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
